@@ -1,4 +1,10 @@
-## Purdue Boiler TV on-demand API ##
+## Purdue Boiler TV On Demand API ##
 
-Scrapes and caches movie information from Purdue's [Boiler TV On Demand page](https://boilertvondemand-housing-purdue-edu.swankmp.net/#/browse).
-The cache is refreshed hourly by default.
+Caches and tracks movie information from Purdue's [Boiler TV On Demand page](https://boilertvondemand-housing-purdue-edu.swankmp.net).
+
+The cache is refreshed daily by default.
+
+```bash
+# Manual ingest
+python -m btv_on_demand.ingest
+```
