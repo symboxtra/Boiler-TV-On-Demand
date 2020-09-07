@@ -16,10 +16,10 @@ def get_storage_path(path=''):
     '''
 
     if (is_env_override('BTV_STORAGE_PATH')):
-        return get_env_override('BTV_STORAGE_PATH')
-
-    base_path = os.path.expanduser('~')
-    folder_path = os.path.join(base_path, '.btv-on-demand')
+        folder_path = get_env_override('BTV_STORAGE_PATH')
+    else:
+        base_path = os.path.expanduser('~')
+        folder_path = os.path.join(base_path, '.btv-on-demand')
 
     if (not os.path.exists(folder_path)):
         os.mkdir(folder_path)

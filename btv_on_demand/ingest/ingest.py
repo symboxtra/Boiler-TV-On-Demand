@@ -57,3 +57,32 @@ def ingest_contents(db: BtvDatabase, contents):
         for director in content['Directors']:
             person_id = db.insert_person(director)
             db.associate_director(content_id, person_id)
+
+def main_ingest(args):
+
+    import sys
+    from datetime import datetime
+    from pprint import pprint
+
+    from ..db import BtvDatabase
+
+    print('')
+    print(f'Ingest started {datetime.now()}')
+    print('---------------------------------------')
+
+    db = BtvDatabase.factory('sqlite')
+
+    categories = get_categories()
+
+    print(f'{len(categories)} categories:')
+    pprint(categories)
+    print('')
+    ingest_categories(db, categories)
+
+    content = get_content()
+
+    print(f'{len(content)} programs:')
+    # pprint(content)
+    print('Print out omitted')
+    print('')
+    ingest_contents(db, content)
