@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+
+  btv:
+    image: symboxtra/btv-on-demand
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      - BTV_INGEST_INTERVAL_H=24
+      - BTV_STORAGE_PATH=/app/storage
+    ports:
+      - 8080:80
+    volumes:
+      - db:/app/storage
+
+volumes:
+  db:
+    external: false
