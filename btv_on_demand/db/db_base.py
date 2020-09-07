@@ -59,7 +59,7 @@ class BtvDatabase(ABC):
         pass
 
     @abstractmethod
-    def insert_category(self, name, id=None) -> int:
+    def insert_category(self, name, ext_category_id=None) -> int:
         pass
 
     @abstractmethod
@@ -82,41 +82,53 @@ class BtvDatabase(ABC):
     def associate_director(self, content_id, person_id):
         pass
 
-    def _get_by_id(self, table, id) -> Dict[str, Any]:
-        qstring = f'''SELECT * FROM {table} WHERE id = ?'''
-        result = self._execute(qstring, [id])
-
-        if (len(result) == 0):
+    def _first_result(self, results):
+        if (len(results) == 0):
             return None
 
-        return result[0]
+        return results[0]
 
     def get_category_by_id(self, id) -> Dict[str, Any]:
-        return self._get_by_id('category', id)
+        qstring = f'''SELECT * FROM category WHERE id = ?'''
+        results = self._execute(qstring, [id])
+
+        return self._first_result(results)
+
+    def get_category_by_ext_id(self, ext_id) -> Dict[str, Any]:
+        qstring = f'''SELECT * FROM category WHERE ext_category_id = ? ORDER BY first_seen DESC'''
+        results = self._execute(qstring, [ext_id])
+
+        return self._first_result(results)
 
     def get_category_by_name(self, name) -> Dict[str, Any]:
         qstring = '''SELECT * FROM category WHERE name = ?'''
-        result = self._execute(qstring, [name])
+        results = self._execute(qstring, [name])
 
-        if (len(result) == 0):
-            return None
-
-        return result[0]
+        return self._first_result(results)
 
     def get_person_by_id(self, id) -> Dict[str, Any]:
-        return self._get_by_id('person', id)
+        qstring = f'''SELECT * FROM person WHERE id = ?'''
+        results = self._execute(qstring, [id])
+
+        return self._first_result(results)
 
     def get_person_by_name(self, name) -> Dict[str, Any]:
         qstring = '''SELECT * FROM person WHERE name = ?'''
-        result = self._execute(qstring, [name])
+        results = self._execute(qstring, [name])
 
-        if (len(result) == 0):
-            return None
-
-        return result[0]
+        return self._first_result(results)
 
     def get_content_by_id(self, id) -> Dict[str, Any]:
-        return self._get_by_id('content', id)
+        qstring = f'''SELECT * FROM content WHERE id = ?'''
+        results = self._execute(qstring, [id])
+
+        return self._first_result(results)
+
+    def get_content_by_ext_content_id(self, ext_id) -> Dict[str, Any]:
+        qstring = f'''SELECT * FROM content WHERE ext_content_id = ?'''
+        results = self._execute(qstring, [ext_id])
+
+        return self._first_result(results)
 
     def get_content_by_title(self, title) -> Iterable[Dict[str, Any]]:
         qstring = '''SELECT * FROM content WHERE title = ?'''
@@ -165,12 +177,9 @@ class BtvDatabase(ABC):
                 AND license_start = ?
                 AND license_end = ?
         '''
-        result = self._execute(qstring, [content_id, start, end])
+        results = self._execute(qstring, [content_id, start, end])
 
-        if (len(result) == 0):
-            return None
-
-        return result[0]
+        return self._first_result(results)
 
     def get_license_periods_by_content(self, content_id) -> Iterable[Dict[str, Any]]:
 

@@ -36,10 +36,10 @@ def ingest_categories(db: BtvDatabase, categories):
 
     for category in categories:
 
-        category_id = category['CategoryId']
+        ext_category_id = category['CategoryId']
         category_name = category['Name']
 
-        db.insert_category(category_name, id=category_id)
+        db.insert_category(category_name, ext_category_id=ext_category_id)
 
 def ingest_contents(db: BtvDatabase, contents):
 
@@ -48,7 +48,7 @@ def ingest_contents(db: BtvDatabase, contents):
         content_id = db.insert_content(content)
 
         for category_id in content['CategoryIds']:
-            db.associate_category(content_id, category_id)
+            db.associate_ext_category(content_id, category_id)
 
         for actor in content['Actors']:
             person_id = db.insert_person(actor)

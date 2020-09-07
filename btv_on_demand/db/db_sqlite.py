@@ -63,18 +63,18 @@ class BtvSqliteDatabase(BtvDatabase):
         else:
             return [dict(row) for row in result]
 
-    def insert_category(self, name, id=None):
+    def insert_category(self, name, ext_category_id=None):
 
         self._begin()
         qstring = '''
             INSERT OR IGNORE INTO category (
-                id,
+                ext_category_id,
                 name
             ) VALUES (
                 ?, ?
             )
         '''
-        self._execute(qstring, [id, name])
+        self._execute(qstring, [ext_category_id, name])
         self._commit()
 
         category = self.get_category_by_name(name)
@@ -112,6 +112,7 @@ class BtvSqliteDatabase(BtvDatabase):
         qstring = '''
             INSERT OR REPLACE INTO content (
                 id,
+                ext_content_id,
                 media_item_id,
                 film_id,
                 permalink_token,
@@ -128,13 +129,16 @@ class BtvSqliteDatabase(BtvDatabase):
                 ustv_rating,
                 encode_type,
                 license_start,
-                license_end
+                license_end,
+                first_seen
             ) VALUES (
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                (SELECT id FROM content WHERE ext_content_id = ? AND title = ?),
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                (SELECT first_seen FROM content WHERE ext_content_id = ? AND title = ?)
             )
         '''
 
-        content_id = api_fields['ContentId']
+        ext_content_id = api_fields['ContentId']
         runtime_s = parse_time_to_s(api_fields.get('Runtime', None))
         runtime_h = None if runtime_s is None else runtime_s / 60.0 / 60.0
         license_start = api_fields.get('LicenseStartDate', None)
@@ -149,7 +153,9 @@ class BtvSqliteDatabase(BtvDatabase):
         ustv_rating = next(ustv_filtered, {}).get('Value')
 
         self._execute(qstring, [
-            content_id,
+            ext_content_id,
+            api_fields.get('Title', None),
+            ext_content_id,
             api_fields['MediaItemID'],
             api_fields['FilmId'],
             api_fields.get('PermalinkToken', None),
@@ -166,19 +172,21 @@ class BtvSqliteDatabase(BtvDatabase):
             ustv_rating,
             api_fields.get('EncodeType', None),
             license_start,
-            license_end
+            license_end,
+            ext_content_id,
+            api_fields.get('Title', None)
         ])
 
         self._commit()
 
-        content = self.get_content_by_id(content_id)
+        content = self.get_content_by_ext_content_id(ext_content_id)
 
         if (content is None):
             print(f'Could not retrieve content after insertion!')
             raise BtvDatabaseError('Content missing after insertion')
 
         # Add the license period to keep a history
-        self.insert_license_period(content_id, license_start, license_end)
+        self.insert_license_period(content['id'], license_start, license_end)
 
         return content['id']
 
@@ -223,6 +231,14 @@ class BtvSqliteDatabase(BtvDatabase):
             category_id
         ])
         self._commit()
+
+    def associate_ext_category(self, content_id, ext_category_id):
+        category = self.get_category_by_ext_id(ext_category_id)
+
+        if (category is None):
+            raise BtvDatabaseError(f'Cannot find category with ID: {ext_category_id}')
+
+        return self.associate_category(content_id, category['id'])
 
     def associate_star(self, content_id, person_id):
         self._begin()
