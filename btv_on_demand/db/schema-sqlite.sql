@@ -60,7 +60,24 @@ CREATE TABLE IF NOT EXISTS directed_by (
 CREATE TABLE IF NOT EXISTS license (
     id INTEGER PRIMARY KEY,
     content_id INTEGER REFERENCES content(id),
-    license_start TEXT NOT NULL,
-    license_end TEXT NOT NULL,
+    license_start TEXT,
+    license_end TEXT,
     UNIQUE (content_id, license_start, license_end)
 );
+
+
+DROP VIEW IF EXISTS current_content;
+CREATE VIEW current_content AS
+    SELECT
+        *
+    FROM content
+    WHERE license_end >= datetime('now')
+;
+
+DROP VIEW IF EXISTS expired_content;
+CREATE VIEW current_content AS
+    SELECT
+        *
+    FROM content
+    WHERE license_end < datetime('now')
+;

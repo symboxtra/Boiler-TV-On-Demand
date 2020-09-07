@@ -133,7 +133,9 @@ class BtvSqliteDatabase(BtvDatabase):
                 first_seen
             ) VALUES (
                 (SELECT id FROM content WHERE ext_content_id = ? AND title = ?),
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                datetime(?),
+                datetime(?),
                 (SELECT first_seen FROM content WHERE ext_content_id = ? AND title = ?)
             )
         '''
@@ -186,9 +188,10 @@ class BtvSqliteDatabase(BtvDatabase):
             raise BtvDatabaseError('Content missing after insertion')
 
         # Add the license period to keep a history
-        self.insert_license_period(content['id'], license_start, license_end)
+        content_id = content['id']
+        self.insert_license_period(content_id, license_start, license_end)
 
-        return content['id']
+        return content_id
 
     def insert_license_period(self, content_id, start, end):
         self._begin()
@@ -198,7 +201,9 @@ class BtvSqliteDatabase(BtvDatabase):
                 license_start,
                 license_end
             ) VALUES (
-                ?, ?, ?
+                ?,
+                datetime(?),
+                datetime(?)
             )
         '''
         self._execute(qstring, [
@@ -271,3 +276,22 @@ class BtvSqliteDatabase(BtvDatabase):
             person_id
         ])
         self._commit()
+
+    def get_license_period(self, content_id, start, end):
+        qstring = '''
+            SELECT *
+            FROM license
+            WHERE
+                content_id = ?
+                AND (
+                    license_start = datetime(?)
+                    OR license_start IS NULL
+                )
+                AND (
+                    license_end = datetime(?)
+                    OR license_end IS NULL
+                )
+        '''
+        results = self._execute(qstring, [content_id, start, end])
+
+        return self._first_result(results)

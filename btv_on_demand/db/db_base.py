@@ -167,19 +167,9 @@ class BtvDatabase(ABC):
         '''
         return self._execute(qstring, [person_id])
 
+    @abstractmethod
     def get_license_period(self, content_id, start, end) -> Dict[str, Any]:
-
-        qstring = '''
-            SELECT *
-            FROM license
-            WHERE
-                content_id = ?
-                AND license_start = ?
-                AND license_end = ?
-        '''
-        results = self._execute(qstring, [content_id, start, end])
-
-        return self._first_result(results)
+        pass
 
     def get_license_periods_by_content(self, content_id) -> Iterable[Dict[str, Any]]:
 
