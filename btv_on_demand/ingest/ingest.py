@@ -5,6 +5,9 @@ import requests
 from ..db import BtvDatabase
 
 BASE_URL = 'https://boilertvondemand-housing-purdue-edu.swankmp.net/jsonapi/'
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36'
+}
 
 class BtvError(Exception):
     pass
@@ -14,7 +17,7 @@ def get_categories():
     url = urljoin(BASE_URL, 'GetCategories')
 
     try:
-        resp = requests.get(url)
+        resp = requests.get(url, headers=HEADERS)
         resp_json = resp.json()
     except Exception as e:
         raise BtvError('Could not process request. Are you connected to the VPN?', e)
@@ -25,7 +28,7 @@ def get_content():
 
     url = urljoin(BASE_URL, 'GetAllContent')
     try:
-        resp = requests.get(url)
+        resp = requests.get(url, headers=HEADERS)
         resp_json = resp.json()
     except Exception as e:
         raise BtvError('Could not process request. Are you connected to the VPN?', e)

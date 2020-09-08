@@ -14,6 +14,7 @@ def do_ingest():
         main_ingest(sys.argv)
     except Exception as e:
         print(f'Ingest failed: {e}')
+        print('')
     else:
         print('Ingest complete')
 
