@@ -14,21 +14,11 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.mozilla.org/*"
+        "*://google.com/*"
       ],
       "js": [
         "content_script.js"
       ]
     }
-  ],
-  "browser_action": {
-    "default_icon": {
-      "64": "icons/icon.png"
-    },
-    "default_popup": "browserAction/index.html",
-    "default_title": "BoilerTVContentList"
-  },
-  "options_ui": {
-    "page": "options/index.html"
-  }
+  ]
 }
