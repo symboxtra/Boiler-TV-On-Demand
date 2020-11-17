@@ -75,7 +75,7 @@ CREATE VIEW current_content AS
 ;
 
 DROP VIEW IF EXISTS expired_content;
-CREATE VIEW current_content AS
+CREATE VIEW expired_content AS
     SELECT
         *
     FROM content
