@@ -1,0 +1,26 @@
+{
+  "name": "boiler-tv-content-list",
+  "version": "0.0.1",
+  "description": "Show content available from BoilerTV when trying to figure out where to watch a movie or TV show.",
+  "main": "background_script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmcker/btv-on-demand.git"
+  },
+  "keywords": [
+    "purdue",
+    "boilertv",
+    "btv",
+    "tv",
+    "movies"
+  ],
+  "author": "Jack McKernan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jmcker/btv-on-demand/issues"
+  },
+  "homepage": "https://github.com/jmcker/btv-on-demand#readme"
+}
