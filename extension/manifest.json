@@ -6,6 +6,10 @@
   "icons": {
     "64": "icons/icon.png"
   },
+  "web_accessible_resources": [
+    "icons/*.svg",
+    "icons/*.png"
+  ],
   "background": {
     "scripts": [
       "background_script.js"
@@ -14,7 +18,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://google.com/*"
+        "*://www.google.com/*"
       ],
       "js": [
         "content_script.js"
