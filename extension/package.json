@@ -2,8 +2,13 @@
   "name": "boiler-tv-content-list",
   "version": "0.0.1",
   "description": "Show content available from BoilerTV when trying to figure out where to watch a movie or TV show.",
-  "main": "background_script.js",
+  "main": "",
   "scripts": {
+    "build": "web-ext build",
+    "lint": "web-ext lint",
+    "start": "web-ext run",
+    "sign": "sign.sh",
+    "chrome": "web-ext run -t chromium",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/jmcker/btv-on-demand/issues"
   },
-  "homepage": "https://github.com/jmcker/btv-on-demand#readme"
+  "homepage": "https://github.com/jmcker/btv-on-demand#readme",
+  "devDependencies": {
+    "web-ext": "^5.3.0"
+  }
 }
